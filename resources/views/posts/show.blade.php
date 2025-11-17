@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('layouts.app-crud')
 
 @section('content')
 <div class="row justify-content-center">
@@ -24,7 +24,7 @@
             <form action="{{ route('posts.destroy', $post->id) }}" method="POST" class="d-inline">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this post?')">Delete Post</button>
+                <button type="submit" class="btn btn-danger btn-delete">Delete Post</button>
             </form>
         </div>
     </div>
