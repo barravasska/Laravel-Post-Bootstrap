@@ -6,7 +6,9 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h3 class="mb-0">All Posts</h3>
-                <a href="{{ route('posts.create') }}" class="btn btn-primary">Create New Post</a>
+                @can('create posts')
+                    <a href="{{ route('posts.create') }}" class="btn btn-primary">Create New Post</a>
+                @endcan
             </div>
             <div class="card-body">
                 @if($posts->count() > 0)
@@ -26,20 +28,28 @@
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
                                     <td>
-                                        <a href="{{ route('posts.show', $post->id) }}" class="text-decoration-none">
+                                        <a href="{{ route('posts.show', $post->id) }}">
                                             {{ $post->title }}
                                         </a>
                                     </td>
                                     <td>{{ Str::limit($post->content, 50) }}</td>
                                     <td>{{ $post->created_at->format('M d, Y') }}</td>
                                     <td>
-                                        <a href="{{ route('posts.show', $post->id) }}" class="btn btn-sm btn-info">View</a>
-                                        <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                        <form action="{{ route('posts.destroy', $post->id) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger btn-delete">Delete</button>
-                                        </form>
+                                        @can('view posts')
+                                            <a href="{{ route('posts.show', $post->id) }}" class="btn btn-sm btn-info">View</a>
+                                        @endcan
+                                        
+                                        @can('edit posts')
+                                            <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                        @endcan
+                                        
+                                        @can('delete posts')
+                                            <form action="{{ route('posts.destroy', $post->id) }}" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger btn-delete">Delete</button>
+                                            </form>
+                                        @endcan
                                     </td>
                                 </tr>
                                 @endforeach
@@ -48,7 +58,11 @@
                     </div>
                 @else
                     <div class="alert alert-info text-center">
-                        <p class="mb-0">No posts yet. <a href="{{ route('posts.create') }}">Create your first post</a></p>
+                        <p class="mb-0">No posts yet. 
+                            @can('create posts')
+                                <a href="{{ route('posts.create') }}">Create your first post</a>
+                            @endcan
+                        </p>
                     </div>
                 @endif
             </div>
