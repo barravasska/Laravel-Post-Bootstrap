@@ -4,18 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
     public function index()
     {
-        // Option 1: Semua posts (untuk semua user)
         $posts = Post::latest()->get();
-        
-        // Option 2: Hanya posts milik user yang login
-        // $posts = Post::where('user_id', Auth::id())->latest()->get();
-        
         return view('posts.index', compact('posts'));
     }
 
@@ -26,45 +20,50 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $validatedData = $request->validate([
             'title' => 'required|max:255',
             'content' => 'required',
         ]);
 
-        // Tambahkan user_id (jika ada kolom user_id di table posts)
-        // $validated['user_id'] = Auth::id();
+        // Tambahkan user_id jika ada kolom
+        // $validatedData['user_id'] = auth()->id();
 
-        Post::create($validated);
+        Post::create($validatedData);
 
-        return redirect()->route('posts.index')->with('success', 'Post berhasil dibuat!');
+        return redirect()->route('posts.index')->with('success', 'Post created successfully!');
     }
 
-    public function show(Post $post)
+    public function show($id)
     {
+        $post = Post::findOrFail($id);
         return view('posts.show', compact('post'));
     }
 
-    public function edit(Post $post)
+    public function edit($id)
     {
+        $post = Post::findOrFail($id);
+        // Authorization bisa ditambahkan di sini jika perlu
         return view('posts.edit', compact('post'));
     }
 
-    public function update(Request $request, Post $post)
+    public function update(Request $request, $id)
     {
-        $validated = $request->validate([
+        $validatedData = $request->validate([
             'title' => 'required|max:255',
             'content' => 'required',
         ]);
 
-        $post->update($validated);
+        $post = Post::findOrFail($id);
+        $post->update($validatedData);
 
-        return redirect()->route('posts.show', $post->id)->with('success', 'Post berhasil diupdate!');
+        return redirect()->route('posts.index')->with('success', 'Post updated successfully!');
     }
 
-    public function destroy(Post $post)
+    public function destroy($id)
     {
+        $post = Post::findOrFail($id);
         $post->delete();
 
-        return redirect()->route('posts.index')->with('success', 'Post berhasil dihapus!');
+        return redirect()->route('posts.index')->with('success', 'Post deleted successfully!');
     }
 }

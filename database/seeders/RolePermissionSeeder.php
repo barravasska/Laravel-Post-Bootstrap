@@ -12,32 +12,31 @@ class RolePermissionSeeder extends Seeder
 {
     public function run()
     {
-        // Reset cached roles and permissions
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Buat Permissions - pakai firstOrCreate agar tidak duplikat
+        // Buat Permissions
         $permissions = [
             'view posts',
             'create posts',
             'edit posts',
             'delete posts',
+            'manage users',
         ];
 
         foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission]); // ✅ Ubah jadi firstOrCreate
+            Permission::firstOrCreate(['name' => $permission]);
         }
 
-        // Buat Roles - pakai firstOrCreate
-        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        // Buat Roles
         $writerRole = Role::firstOrCreate(['name' => 'writer']);
-        $viewerRole = Role::firstOrCreate(['name' => 'viewer']);
+        $editorRole = Role::firstOrCreate(['name' => 'editor']);
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
 
-        // Assign Permissions ke Roles (sync untuk menghindari duplikat)
-        $adminRole->syncPermissions(Permission::all()); // ✅ Pakai sync
-        $writerRole->syncPermissions(['view posts', 'create posts', 'edit posts']);
-        $viewerRole->syncPermissions(['view posts']);
+        // Assign Permissions ke Roles
+        $writerRole->syncPermissions(['view posts', 'create posts']);
+        $editorRole->syncPermissions(['view posts', 'create posts', 'edit posts']);
+        $adminRole->syncPermissions(Permission::all());
 
-        // Buat User Admin (jika belum ada)
+        // Buat User Admin
         $admin = User::firstOrCreate(
             ['email' => 'admin@example.com'],
             [
@@ -46,7 +45,7 @@ class RolePermissionSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
-        $admin->syncRoles(['admin']); // ✅ Pakai sync
+        $admin->syncRoles(['admin']);
 
         // Buat User Writer
         $writer = User::firstOrCreate(
@@ -59,15 +58,15 @@ class RolePermissionSeeder extends Seeder
         );
         $writer->syncRoles(['writer']);
 
-        // Buat User Viewer
-        $viewer = User::firstOrCreate(
-            ['email' => 'viewer@example.com'],
+        // Buat User Editor
+        $editor = User::firstOrCreate(
+            ['email' => 'editor@example.com'],
             [
-                'name' => 'Viewer User',
+                'name' => 'Editor User',
                 'password' => Hash::make('password123'),
                 'email_verified_at' => now(),
             ]
         );
-        $viewer->syncRoles(['viewer']);
+        $editor->syncRoles(['editor']);
     }
 }

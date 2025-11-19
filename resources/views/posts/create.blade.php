@@ -1,44 +1,64 @@
 @extends('layouts.app-crud')
 
 @section('content')
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h3>Create New Post</h3>
-            </div>
-            <div class="card-body">
-                <form action="{{ route('posts.store') }}" method="POST">
-                    @csrf
-                    <div class="mb-3">
-                        <label for="title" class="form-label">Title</label>
-                        <input type="text" class="form-control @error('title') is-invalid @enderror"
-                               id="title" name="title" value="{{ old('title') }}" required>
-                        @error('title')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="content" class="form-label">Content</label>
-                        <textarea class="form-control @error('content') is-invalid @enderror"
-                                  id="content" name="content" rows="5" required>{{ old('content') }}</textarea>
-                        @error('content')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-                    
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-success">Create Post</button>
-                    </div>
-                </form>
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">Create New Post</h4>
+                </div>
                 
-                <div class="mt-3 text-center">
-                    <a href="{{ route('posts.index') }}" class="btn btn-secondary">Back to Posts</a>
+                <div class="card-body">
+                    <form action="{{ route('posts.store') }}" method="POST">
+                        @csrf
+                        
+                        <!-- Title Input -->
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" 
+                                   name="title" 
+                                   id="title" 
+                                   value="{{ old('title') }}"
+                                   class="form-control @error('title') is-invalid @enderror" 
+                                   placeholder="Enter post title here..."
+                                   required>
+                            
+                            @error('title')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+
+                        <!-- Content Textarea -->
+                        <div class="mb-4">
+                            <label for="content" class="form-label">Content</label>
+                            <textarea name="content" 
+                                      id="content" 
+                                      rows="5" 
+                                      class="form-control @error('content') is-invalid @enderror" 
+                                      placeholder="Write your content here..."
+                                      required>{{ old('content') }}</textarea>
+                            
+                            @error('content')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Create Post
+                            </button>
+                            
+                            <a href="{{ route('posts.index') }}" class="btn btn-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
